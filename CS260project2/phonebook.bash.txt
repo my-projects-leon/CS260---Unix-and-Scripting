@@ -1,0 +1,63 @@
+#!/bin/bash
+#script that gives options to sort or search in a phonebook
+#if no command line argument is given exit script
+if test $# -eq 0
+then
+echo "You must provide a file to sort"
+exit 1
+fi
+
+#list of bhonebook options
+echo "--Phone Book Optios--"
+echo "1.List Records alphabetically by first name"
+echo "2.List Records alphabetically by last name"
+echo "3.List Records in Reverse Alphabetical order by first name"
+echo "4.List Records in Reverse Alphabetical order by last name"
+echo "5.Search Records for a Last name and print results"
+echo "6.Search Records by birthday month"
+echo "7.Search records by birthday year"
+echo "Enter desired option(1-7): "
+#take in the users choice
+read choice
+echo
+#use a case switch statement to process the choice
+case "$choice" in
+'1')
+#sort alphabetically
+sort $1
+;;
+'2')
+#sort alphabetically by last name
+sort -k2 $1
+;;
+'3')
+#sort in reverse order alphabetically by first name
+sort -r $1
+;;
+'4')
+#sort in reverse order alphabetically by last name
+sort -k2 -r $1
+;;
+'5')
+#take in last name to search for, then search for it, if found print out records otherwise not there
+echo "Enter a last name to search for: "
+read last
+awk -v lname="$last" '$2~ lname' $1
+;;
+'6')
+#take in month to search for, if found print results otherwise dont
+echo "Enter birth month(1-12): "
+read month
+awk -F: -v pat="$month/[1-9]+/[1-9][1-9]" '$5~ pat' $1
+;;
+'7')
+#take in year to search for if found print out results otherwise dont print
+echo "Enter birth year(two digits): "
+read year
+awk -F: -v patt="[1-9]+/[1-9]+/$year" '$5~ patt' $1
+;;
+*)
+#default result if a different choice is picked
+echo "This option does not exist please enter a valid choice"
+;;
+esac                                                                  
